@@ -24,8 +24,22 @@ def add_book(title, author):
     conn = sqlite3.connect(DB_PATH)
     try:
         with conn:
-            conn.execute("INSERT INTO books (title, author) VALUES (?, ?)", (title, author))
+            conn.execute(
+                "INSERT INTO books (title, author) VALUES (?, ?)", (title, author)
+            )
         print(f"Book '{title}' added successfully.")
+    except sqlite3.Error as e:
+        print("Database error:", e)
+    finally:
+        conn.close()
+
+
+def add_book_batch(books):
+    conn = sqlite3.connect(DB_PATH)
+    try:
+        with conn:
+            conn.executemany("INSERT INTO books (title, author) VALUES (?, ?)", books)
+        print(f"{len(books)} books added successfully.")
     except sqlite3.Error as e:
         print("Database error:", e)
     finally:
@@ -54,7 +68,9 @@ def view_all_books():
 def view_books_by_id(book_id):
     conn = sqlite3.connect(DB_PATH)
     try:
-        cur = conn.execute("SELECT id, title, author FROM books WHERE id = ?", (book_id,))
+        cur = conn.execute(
+            "SELECT id, title, author FROM books WHERE id = ?", (book_id,)
+        )
         row = cur.fetchone()
 
         if not row:
@@ -71,7 +87,9 @@ def view_books_by_id(book_id):
 def search_books_by_author(author):
     conn = sqlite3.connect(DB_PATH)
     try:
-        cur = conn.execute("SELECT id, title, author FROM books WHERE author = ?", (author,))
+        cur = conn.execute(
+            "SELECT id, title, author FROM books WHERE author = ?", (author,)
+        )
         rows = cur.fetchall()
 
         if not rows:
@@ -91,7 +109,9 @@ def update_book_title(book_id, new_title):
     conn = sqlite3.connect(DB_PATH)
     try:
         with conn:
-            cur = conn.execute("UPDATE books SET title = ? WHERE id = ?", (new_title, book_id))
+            cur = conn.execute(
+                "UPDATE books SET title = ? WHERE id = ?", (new_title, book_id)
+            )
             if cur.rowcount == 0:
                 print(f"No book found with ID {book_id}.")
             else:
@@ -128,9 +148,10 @@ def main():
         print("4. Search Books by Author")
         print("5. Update Book Title")
         print("6. Delete Book")
+        print("7. Add Multiple Books")
         print("0. Exit")
 
-        choice = input("Enter your choice (0-6): ").strip()
+        choice = input("Enter your choice (0-7): ").strip()
 
         if choice == "1":
             view_all_books()
@@ -186,6 +207,37 @@ def main():
                 continue
 
             delete_book(book_id)
+
+        elif choice == "7":
+            num_books_input = input("Enter number of books to add: ").strip()
+            try:
+                num_books = int(num_books_input)
+                if num_books <= 0:
+                    print("Number of books must be greater than zero.")
+                    continue
+            except ValueError:
+                print("Invalid number. Please enter a positive integer.")
+                continue
+
+            books_to_add = []
+            for i in range(num_books):
+                print(f"\nEntering details for book {i + 1}:")
+                title = input("Enter book title: ").strip()
+                if not title:
+                    print("Title cannot be empty. Skipping this book.")
+                    continue
+
+                author = input("Enter author name: ").strip()
+                if not author:
+                    print("Author cannot be empty. Skipping this book.")
+                    continue
+
+                books_to_add.append((title, author))
+
+            if books_to_add:
+                add_book_batch(books_to_add)
+            else:
+                print("No valid books to add.")
 
         elif choice == "0":
             print("Exiting application. Goodbye!")
