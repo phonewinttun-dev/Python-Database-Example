@@ -1,0 +1,47 @@
+Database - What, How, Why
+
+What is database?
+
+- permanent storage for data
+
+ACID properties
+
+- Atomicity
+- Consistency
+- Isolation
+- Durability
+
+How?
+
+- Server
+
+Why?
+
+- Persistent, Consistent, permanent
+
+2 Delete
+
+- Hard Delete
+- Soft Delete
+
+Database Characteristics
+
+- Table (Product, Category, Sales)
+- Column
+- Row (Data Record)
+
+
+conn.execute("students.db")
+CREATE TABLE IF NOT EXISTS students (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name TEXT NOT NULL,
+                    age INTEGER,
+                    grade TEXT
+                )
+
+database name -> students.db
+table name -> students
+Column name -> id, name, age, grade
+Column name တွေကို data type သတ်မှတ်
+AUTOINCREMENT -> +1
+NOT NULL -> empty value မဖြစ်ရ
