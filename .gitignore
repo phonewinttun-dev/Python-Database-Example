@@ -1,0 +1,10 @@
+# Slide presentation file
+Technortal Database Slide.html
+
+# SQLite database files
+*.db
+*.sqlite3
+
+# Python artifacts
+__pycache__/
+*.pyc
